@@ -61,8 +61,10 @@ impl ExerciseManager {
             "Two Sum (Classic LeetCode Problem)",
             "exercises::two_sum::two_sum_v1",
             vec![
-                "Try using a data structure to store values you've seen while iterating.".to_string(),
-                "For each number, calculate what value would complement it to reach the target.".to_string(),
+                "Try using a data structure to store values you've seen while iterating."
+                    .to_string(),
+                "For each number, calculate what value would complement it to reach the target."
+                    .to_string(),
             ],
         );
 
@@ -72,7 +74,8 @@ impl ExerciseManager {
             "exercises::two_sum::warehouse_weight",
             vec![
                 "This problem is structurally similar to the classic Two Sum problem.".to_string(),
-                "Think about what data structure could help you find matching boxes efficiently.".to_string(),
+                "Think about what data structure could help you find matching boxes efficiently."
+                    .to_string(),
             ],
         );
 
@@ -102,8 +105,15 @@ impl ExerciseManager {
         manager
     }
 
-    fn add_exercise(&mut self, name: &str, display_name: &str, module_path: &str, hints: Vec<String>) {
-        self.exercises.push(Exercise::new(name, display_name, module_path));
+    fn add_exercise(
+        &mut self,
+        name: &str,
+        display_name: &str,
+        module_path: &str,
+        hints: Vec<String>,
+    ) {
+        self.exercises
+            .push(Exercise::new(name, display_name, module_path));
         self.hints.insert(name.to_string(), hints);
     }
 
@@ -119,16 +129,28 @@ impl ExerciseManager {
         self.exercises.get_mut(self.current_index)
     }
 
+    /// Gets a mutable reference to an exercise by its index.
+    pub fn get_exercise_mut_by_index(&mut self, index: usize) -> Option<&mut Exercise> {
+        self.exercises.get_mut(index)
+    }
+
     pub fn get_exercise_hints(&self, exercise_name: &str) -> Option<&Vec<String>> {
         self.hints.get(exercise_name)
     }
 
+    /// Returns a mutable iterator over the exercises.
+    pub fn exercises_iter_mut(&mut self) -> impl Iterator<Item = &mut Exercise> {
+        self.exercises.iter_mut()
+    }
+
     pub fn get_current_hints(&self) -> Option<&Vec<String>> {
-        self.get_current_exercise().and_then(|ex| self.hints.get(&ex.name))
+        self.get_current_exercise()
+            .and_then(|ex| self.hints.get(&ex.name))
     }
 
     pub fn set_to_first_incomplete(&mut self) {
-        self.current_index = self.exercises
+        self.current_index = self
+            .exercises
             .iter()
             .position(|ex| !ex.is_complete)
             .unwrap_or(0);

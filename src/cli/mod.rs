@@ -93,6 +93,9 @@ impl InteractiveCLI {
                         println!("\nCongratulations! You have completed all exercises!");
                     }
                 }
+                "c" => {
+                    self.check_all_exercises();
+                }
                 _ => {
                     println!("Unknown command.");
                 }
@@ -160,7 +163,7 @@ impl InteractiveCLI {
     }
 
     fn display_commands(&self) {
-        print!("Commands: [l] List | [q] Quit");
+        print!("Commands: [l] List | [c] Check All | [q] Quit");
         if let Some(exercise) = self.exercise_manager.get_current_exercise() {
             if !exercise.is_complete {
                 print!(" | [h] Hint");
@@ -175,6 +178,119 @@ impl InteractiveCLI {
             }
         }
         println!(); // Newline after commands
+    }
+
+    /// Runs tests synchronously for a single exercise and returns true if successful.
+    fn run_tests_for_exercise_sync(&self, exercise: &Exercise) -> bool {
+        println!("  Checking '{}'...", exercise.display_name);
+        let test_filter = exercise.module_path.clone();
+        let output = Command::new("cargo")
+            .args(["test", "--", &test_filter, "--color", "never", "--quiet"])
+            .output();
+
+        match output {
+            Ok(output) => {
+                if output.status.success() {
+                    println!("    -> Success");
+                    true
+                } else {
+                    println!("    -> Failed");
+                    // Optionally print stderr for debugging:
+                    // if !output.stderr.is_empty() {
+                    //     println!("      Error: {}", String::from_utf8_lossy(&output.stderr));
+                    // }
+                    false
+                }
+            }
+            Err(e) => {
+                eprintln!("    -> Error running tests for '{}': {}", exercise.name, e);
+                false
+            }
+        }
+    }
+
+    /// Checks all exercises, updates their status, and focuses on the first failing one.
+    fn check_all_exercises(&mut self) {
+        println!("\n--- Checking All Exercises ---");
+        self.kill_test_process(); // Stop any current watch/test
+
+        let mut first_failed_index: Option<usize> = None;
+        let exercise_count = self.exercise_manager.get_exercises().len();
+
+        for index in 0..exercise_count {
+            // Get immutable reference first for running tests
+            let exercise_name_display = self
+                .exercise_manager
+                .get_exercises()
+                .get(index)
+                .map(|ex| ex.display_name.clone())
+                .unwrap_or_else(|| "Unknown Exercise".to_string());
+
+            // Need to clone required info before potentially borrowing mutably
+            let exercise_module_path = self
+                .exercise_manager
+                .get_exercises()
+                .get(index)
+                .map(|ex| ex.module_path.clone());
+
+            if let Some(module_path) = exercise_module_path {
+                // Construct a temporary Exercise-like struct or pass necessary info
+                // to avoid borrowing self.exercise_manager immutably and mutably at the same time
+                // For simplicity here, let's assume run_tests_for_exercise_sync can be adapted
+                // or we fetch the necessary details beforehand.
+                // We'll create a temporary Exercise struct for the test function.
+                let temp_exercise = Exercise {
+                    name: "".to_string(), // Not strictly needed for run_tests_for_exercise_sync
+                    display_name: exercise_name_display.clone(),
+                    module_path: module_path,
+                    is_complete: false, // Status doesn't matter for running the test itself
+                };
+
+                let success = self.run_tests_for_exercise_sync(&temp_exercise);
+
+                // Now get mutable reference to update status
+                if let Some(exercise_mut) = self.exercise_manager.get_exercise_mut_by_index(index) {
+                    let _status_changed = exercise_mut.is_complete == success;
+                    exercise_mut.is_complete = success;
+
+                    if !success && first_failed_index.is_none() {
+                        first_failed_index = Some(index);
+                    }
+
+                    // Refresh status based on marker
+                    exercise_mut.refresh_status();
+                    if !exercise_mut.is_complete && first_failed_index.is_none() {
+                        first_failed_index = Some(index);
+                    }
+                } else {
+                    eprintln!(
+                        "Error: Could not get mutable reference to exercise at index {}",
+                        index
+                    );
+                }
+            } else {
+                eprintln!(
+                    "Error: Could not get module path for exercise at index {}",
+                    index
+                );
+            }
+        }
+
+        println!("-----------------------------");
+
+        if let Some(failed_index) = first_failed_index {
+            println!("Found incomplete exercises. Focusing on the first one.");
+            self.exercise_manager.current_index = failed_index;
+        } else {
+            println!("All exercises are currently complete!");
+            // If all are complete, move to the last one.
+            if exercise_count > 0 {
+                self.exercise_manager.current_index = exercise_count - 1;
+            }
+        }
+
+        // Reset the watcher and test state for the (potentially new) current exercise
+        self.setup_current_exercise();
     }
 
     fn list_exercises(&self) {
