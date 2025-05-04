@@ -9,3 +9,4 @@ authors = ["Your Name <your.email@example.com>"]
 notify = "5.1.0"  # For file watching functionality
 clap = "4.3.0"    # For command-line argument parsing
 colored = "2.0.0" # For colorful terminal output
+crossterm = "0.27.0" # For terminal manipulation and key handling

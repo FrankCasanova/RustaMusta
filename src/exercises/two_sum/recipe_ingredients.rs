@@ -1,5 +1,5 @@
 // Problem: Recipe Ingredient Calorie Counter
-// 
+//
 // You are a nutritionist creating meal plans for clients. You need to find two ingredients that
 // together provide exactly the target number of calories for a specific recipe. You have a list
 // of ingredients with their calorie counts.
@@ -15,7 +15,7 @@
 
 // I AM NOT DONE
 
-pub fn find_ingredient_pair(calories: Vec<i32>, target_calories: i32) -> Vec<i32> {
+pub fn find_ingredient_pair(calories: Vec<i32>, _target_calories: i32) -> Vec<i32> {
     // Your code here
     vec![] // Replace this with your solution
 }
@@ -39,8 +39,10 @@ mod tests {
         let target_calories = 240;
         let result = find_ingredient_pair(calories, target_calories);
         assert_eq!(result.len(), 2);
-        assert!((result.contains(&0) && result.contains(&2)) || 
-                (result.contains(&3) && result.contains(&5)));
+        assert!(
+            (result.contains(&0) && result.contains(&2))
+                || (result.contains(&3) && result.contains(&5))
+        );
     }
 
     #[test]

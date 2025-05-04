@@ -18,17 +18,6 @@
 use std::collections::HashMap;
 
 pub fn find_box_pair(box_weights: Vec<i32>, target_weight: i32) -> Vec<i32> {
-    let mut weight_map = HashMap::new();
-    
-    for (i, &weight) in box_weights.iter().enumerate() {
-        let needed_weight = target_weight - weight;
-        
-        if weight_map.contains_key(&needed_weight) {
-            return vec![weight_map[&needed_weight], i as i32];
-        }
-        
-        weight_map.insert(weight, i as i32);
-    }
     
     // This should never happen as we're guaranteed a solution
     vec![]
