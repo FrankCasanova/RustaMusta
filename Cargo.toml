@@ -3,10 +3,11 @@ name = "leetcode75"
 version = "0.1.0"
 edition = "2021"
 description = "An interactive app to learn Rust by solving LeetCode problems"
-authors = ["Your Name <your.email@example.com>"]
+authors = ["Frank Casanova <frankcasanova.info@gmail.com>"]
+license = "MIT"
 
 [dependencies]
-notify = "5.1.0"  # For file watching functionality
-clap = "4.3.0"    # For command-line argument parsing
-colored = "2.0.0" # For colorful terminal output
-crossterm = "0.27.0" # For terminal manipulation and key handling
+notify = "8.0.0"     # For file watching functionality
+clap = "4.5.37"      # For command-line argument parsing
+colored = "3.0.0"    # For colorful terminal output
+crossterm = "0.29.0" # For terminal manipulation and key handling
