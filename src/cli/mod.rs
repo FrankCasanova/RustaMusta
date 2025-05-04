@@ -246,14 +246,19 @@ impl InteractiveCLI {
                     is_complete: false, // Status doesn't matter for running the test itself
                 };
 
-                let success = self.run_tests_for_exercise_sync(&temp_exercise);
+                let test_success = self.run_tests_for_exercise_sync(&temp_exercise);
 
                 // Now get mutable reference to update status
                 if let Some(exercise_mut) = self.exercise_manager.get_exercise_mut_by_index(index) {
-                    let _status_changed = exercise_mut.is_complete == success;
-                    exercise_mut.is_complete = success;
+                    // First, refresh status based on the 'I AM NOT DONE' marker
+                    exercise_mut.refresh_status();
+                    // An exercise is truly complete only if tests pass AND the marker is gone
+                    let final_is_complete = test_success && exercise_mut.is_complete;
 
-                    if !success && first_failed_index.is_none() {
+                    // Update the status based on the combined check
+                    exercise_mut.is_complete = final_is_complete;
+
+                    if !final_is_complete && first_failed_index.is_none() {
                         first_failed_index = Some(index);
                     }
 
