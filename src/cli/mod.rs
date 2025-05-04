@@ -250,10 +250,8 @@ impl InteractiveCLI {
 
                 // Now get mutable reference to update status
                 if let Some(exercise_mut) = self.exercise_manager.get_exercise_mut_by_index(index) {
-                    // First, refresh status based on the 'I AM NOT DONE' marker
-                    exercise_mut.refresh_status();
-                    // An exercise is truly complete only if tests pass AND the marker is gone
-                    let final_is_complete = test_success && exercise_mut.is_complete;
+                    // Exercise complete status now based solely on test results
+                    let final_is_complete = test_success;
 
                     // Update the status based on the combined check
                     exercise_mut.is_complete = final_is_complete;
@@ -262,9 +260,7 @@ impl InteractiveCLI {
                         first_failed_index = Some(index);
                     }
 
-                    // Refresh status based on marker
-                    exercise_mut.refresh_status();
-                    if !exercise_mut.is_complete && first_failed_index.is_none() {
+                    if !final_is_complete && first_failed_index.is_none() {
                         first_failed_index = Some(index);
                     }
                 } else {

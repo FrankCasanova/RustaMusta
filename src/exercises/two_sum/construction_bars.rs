@@ -13,7 +13,6 @@
 // Output: [0, 4]
 // Explanation: The bars at indices 0 and 4 have lengths 120 and 150, which sum to 270.
 
-// I AM NOT DONE
 
 pub fn find_bar_pair(bar_lengths: Vec<i32>, target_length: i32) -> Vec<i32> {
     // Your code here

@@ -11,10 +11,7 @@ pub struct Exercise {
 impl Exercise {
     pub fn new(name: &str, display_name: &str, module_path: &str) -> Self {
         let file_path = format!("src/{}.rs", module_path.replace("::", "/"));
-        let is_complete = match fs::read_to_string(&file_path) {
-            Ok(content) => !content.contains("I AM NOT DONE"),
-            Err(_) => false,
-        };
+        let is_complete = false; // Initialize based on tests, not file content
 
         Exercise {
             name: name.to_string(),
@@ -33,11 +30,7 @@ impl Exercise {
     }
 
     pub fn refresh_status(&mut self) {
-        let file_path = format!("src/{}.rs", self.module_path.replace("::", "/"));
-        self.is_complete = match fs::read_to_string(&file_path) {
-            Ok(content) => !content.contains("I AM NOT DONE"),
-            Err(_) => false,
-        };
+        // No-op, status now determined solely by test results
     }
 }
 
@@ -96,6 +89,16 @@ impl ExerciseManager {
             vec![
                 "Think about the target calories minus each ingredient's calories.".to_string(),
                 "Is there a way to store ingredient information for quick lookups?".to_string(),
+            ],
+        );
+        manager.add_exercise(
+            "array-strings/merge_strings_alternativelly",
+            "Merge Strings Alternately",
+            "exercises::array_strings::merge_strings_alternately",
+            vec![
+                "Think about how you can iterate through both strings simultaneously."
+                   .to_string(),
+                "What if one string is longer than the other?".to_string(),
             ],
         );
 

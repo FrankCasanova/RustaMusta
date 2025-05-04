@@ -13,12 +13,11 @@
 // Output: [1, 4]
 // Explanation: The boxes at indices 1 and 4 have weights 210 and 160, which sum to 370.
 
-// I AM NOT DONE
 
 use std::collections::HashMap;
 
 pub fn find_box_pair(box_weights: Vec<i32>, target_weight: i32) -> Vec<i32> {
-    
+
     // This should never happen as we're guaranteed a solution
     vec![]
 }

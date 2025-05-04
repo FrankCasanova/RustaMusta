@@ -13,7 +13,6 @@
 // Output: [0, 4]
 // Explanation: The ingredients at indices 0 and 4 have 150 and 225 calories, which sum to 375.
 
-// I AM NOT DONE
 
 pub fn find_ingredient_pair(calories: Vec<i32>, _target_calories: i32) -> Vec<i32> {
     // Your code here
